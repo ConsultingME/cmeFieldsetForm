@@ -1,0 +1,9 @@
+<template>
+
+    <lightning-record-view-form object-api-name={sobjectType} record-id={recordId}>
+        <template for:each={fields} for:item="field">
+            <lightning-output-field key={field.apiName} field-name={field.apiName}></lightning-output-field>
+        </template>
+    </lightning-record-view-form> 
+
+</template>
