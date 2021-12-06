@@ -9,7 +9,7 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightningCommunity__Default">
-            <property name="fieldSetName" label="Fieldset" required="true" type="String" description="The API Name of the Fieldset"></property>
+            <property name="configName" label="Config" required="true" type="String" description="The name of the Fieldset Config record"></property>
             <property name="recordId" type="String" label="Record Id" description="Automatically bind the page's record id to the component variable. You probably don't want to change this." default="{!recordId}" />
             <property name="sobjectType" label="SObject Type" required="true" type="String"></property>
         </targetConfig>

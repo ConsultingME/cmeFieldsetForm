@@ -1,3 +1,3 @@
-declare module "@salesforce/apex/cmeFieldsetFormController.getFields" {
-  export default function getFields(param: {sobjectType: any, fieldSetName: any}): Promise<any>;
+declare module "@salesforce/apex/cmeFieldsetFormController.getFieldsetConfig" {
+  export default function getFieldsetConfig(param: {sobjectType: any, configName: any}): Promise<any>;
 }
