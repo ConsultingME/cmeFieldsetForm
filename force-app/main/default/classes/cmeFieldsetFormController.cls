@@ -1,33 +1,40 @@
 public with sharing class cmeFieldsetFormController {
-
+    
     @AuraEnabled(cacheable=true)
-    public static cmeFieldsetFormConfig getFieldsetConfig(String sobjectType, String configName){
+    public static List<cmeFieldsetFormField> getFields(String sobjectType, String fieldSetName){
         try {
-            //TODO: replace this w/ custom metadata
-            cmeFieldsetFormConfig config = new cmeFieldsetFormConfig();
-            config.criteriaField = 'Status_Pharming__c';
-            config.valueToFieldsetNameMap = new Map<String, String>{
-                'Pending' => 'Sample_Field_Set',
-                'Submitted' => 'Sample_Field_Set_2'
-            };
-
-            Map<String, Schema.FieldSet> fieldsetMap = Schema.getGlobalDescribe().get(sobjectType).getDescribe().fieldSets.getMap();
-
-            //TODO: move this into config class?
-            config.valueToFieldsetMap = new Map<String, List<cmeFieldsetFormField>>();
-            for(String val : config.valueToFieldsetNameMap.keyset()) {
-                config.valueToFieldsetMap.put(val, cmeFieldsetFormField.getList(fieldsetMap.get(config.valueToFieldsetNameMap.get(val)).getFields()));
-            }
-
-            return config;
+            return cmeFieldsetFormField.getList(getDescribe(sobjectType).fieldSets.getMap().get(fieldSetName).getFields());
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
-    public class cmeFieldsetFormConfig {
-        @AuraEnabled public String criteriaField {get;set;}
-        @AuraEnabled public Map<String, List<cmeFieldsetFormField>> valueToFieldsetMap {get;set;}
-        public Map<String, String> valueToFieldsetNameMap {get;set;}
+    @AuraEnabled(cacheable=true)
+    public static List<RecordTypeDTO> getAvailableRecordTypes(String sobjectType){
+      List<RecordTypeDTO> recordTypes = new List<RecordTypeDTO>();
+      for(RecordTypeInfo info: getDescribe(sobjectType).getRecordTypeInfos()) {
+          if(info.isAvailable()) {
+              recordTypes.add(new RecordTypeDTO(info.getRecordTypeId(), info.getName()));
+          }
+      }
+  
+      return recordTypes;
+    }
+
+    private static Schema.DescribeSObjectResult getDescribe(String sobjectType) {
+        return Schema.getGlobalDescribe().get(sobjectType).getDescribe();
+    }
+  
+    public class RecordTypeDTO {
+      @AuraEnabled
+      public Id value { get; set; }
+  
+      @AuraEnabled
+      public String label { get; set; }
+  
+      public RecordTypeDTO(Id id, String name) {
+        this.value = id;
+        this.label = name;
+      }
     }
 }
